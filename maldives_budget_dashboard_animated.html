@@ -1,0 +1,374 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Maldives Budget Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background: #f4f4f4;
+      color: #333;
+    }
+    header {
+      background: #1a1a2e;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    main {
+      padding: 2rem;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .chart-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-between;
+    }
+    canvas {
+      background: white;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    select {
+      padding: 0.5rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-left: 0.5rem;
+    }
+    h2 {
+      margin-top: 2rem;
+    }
+    section {
+      margin-top: 3rem;
+    }
+  
+.sidebar {
+  width: 220px;
+  background: #1a1a2e;
+  color: white;
+  padding: 2rem 1rem;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+.sidebar h2 {
+  font-size: 1.4rem;
+  margin-bottom: 2rem;
+}
+.sidebar nav a {
+  display: block;
+  margin: 1rem 0;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+.sidebar nav a:hover {
+  text-decoration: underline;
+}
+
+    
+/* Responsive sidebar */
+.sidebar-toggle {
+  display: none;
+  background: #1a1a2e;
+  color: white;
+  border: none;
+  padding: 1rem;
+  font-size: 1.2rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1001;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: -240px;
+    top: 0;
+    height: 100%;
+    width: 220px;
+    background: #1a1a2e;
+    padding: 2rem 1rem;
+    transition: left 0.3s ease-in-out;
+    z-index: 1000;
+  }
+  .sidebar.open {
+    left: 0;
+    transform: translateX(240px);
+  }
+  .sidebar-toggle {
+    display: block;
+  }
+  .content {
+    margin-left: 0 !important;
+    padding-top: 60px;
+  }
+}
+
+    
+/* Animate sidebar toggle */
+.sidebar {
+  transition: left 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+.sidebar.open {
+  transform: translateX(240px);
+}
+
+    </style>
+</head>
+<body>
+<button class='sidebar-toggle' onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+<div style='display:flex;'>
+
+<div class="sidebar">
+  <h2>Dashboard</h2>
+  <nav>
+    <a href="#stats">Overview</a>
+    <a href="#sectorChart">Sectors</a>
+    <a href="#trendChart">Trends</a>
+    <a href="#trend">Analytics</a>
+    <a href="#report">Report</a>
+    <a href="#economic">Economic Data</a>
+  </nav>
+</div>
+
+<div class='content' style='margin-left:240px;flex:1;'>
+  <header>
+    <h1>Maldives Budget Dashboard</h1>
+    <label>
+      Select Year:
+      <select id="yearSelect">
+        <option value="2025">2025</option>
+        <option value="2024">2024</option>
+        <option value="2023">2023</option>
+        <option value="2022">2022</option>
+      </select>
+    </label>
+  </header>
+  <main>
+    <div class="stats" id="stats" id="statsContainer"></div>
+
+    <section class="chart-container">
+      <div>
+        <h2>Sector Allocation (%)</h2>
+        <canvas id="sectorChart" width="400" height="300"></canvas>
+      </div>
+      <div>
+        <h2>Trends (2022–2025)</h2>
+        <canvas id="trendChart" width="400" height="300"></canvas>
+      </div>
+    </section>
+
+    <section id="trend">
+      <h2>Trend Analytics</h2>
+      <div class="card">
+        <p><strong>Public Spending:</strong> Increased 2025 allocation towards defense and general public services suggests national and administrative priorities have shifted.</p>
+        <p><strong>Debt Levels:</strong> Rising debt-to-GDP indicates growing reliance on external borrowing. Potential risks need monitoring.</p>
+        <p><strong>Education:</strong> While percentage share dipped, nominal value increased reflecting inflation-adjusted spending stability.</p>
+      </div>
+    </section>
+
+    <section id="report">
+      <h2>Budget Report 2025</h2>
+      <div class="card">
+        <ul>
+          <li>Total Budget: MVR 49.2 Billion</li>
+          <li>Deficit: MVR 9.4 Billion</li>
+          <li>Debt-to-GDP: 124.8%</li>
+          <li>Top Allocations: General Public Services, Defense & Housing</li>
+        </ul>
+        <p>The 2025 budget emphasizes state functions and infrastructure improvements. Reduced healthcare share suggests realignment of priorities.</p>
+      </div>
+    </section>
+
+    <section id="economic">
+      <h2>Economic Indicators</h2>
+      <div class="card">
+        <ul>
+          <li><strong>Employment Rate:</strong> 95.2% (estimated)</li>
+          <li><strong>Tourism Revenue:</strong> MVR 28.5B</li>
+          <li><strong>Fisheries Export:</strong> MVR 4.1B</li>
+          <li><strong>Gov. Revenue (MIRA):</strong> MVR 23.3B</li>
+          <li><strong>Inflation Rate:</strong> 2.3%</li>
+          <li><strong>GDP Growth:</strong> 5.0%</li>
+        </ul>
+        <p>Tourism remains the main economic driver. Revenue collection by MIRA improved year-on-year. Fisheries saw a stable export rate.</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const yearData = {
+      '2025': {
+        total: '49.2B',
+        deficit: '9.4B',
+        debt: '124.8%',
+        education: '11%',
+        sectors: [
+          ['General Public Services', 18.3],
+          ['Housing & Community Amenities', 10.6],
+          ['Social Protection', 8.1],
+          ['Environmental Protection', 4.7],
+          ['Defense & Public Order', 13.6],
+          ['Education', 9],
+          ['Recreation, Culture & Religion', 1.2],
+          ['Others', 34.3]
+        ]
+      },
+      '2024': {
+        total: '43.5B',
+        deficit: '7.9B',
+        debt: '110%',
+        education: '9.7%',
+        sectors: [
+          ['Infrastructure', 30],
+          ['Social Protection', 25],
+          ['Debt Servicing', 20],
+          ['Education', 9.7],
+          ['Healthcare', 7],
+          ['Defense', 5],
+          ['Other', 3.3]
+        ]
+      },
+      '2023': {
+        total: '41.2B',
+        deficit: '9.0B',
+        debt: '104%',
+        education: '8.5%',
+        sectors: [
+          ['Infrastructure', 29],
+          ['Social Protection', 24],
+          ['Debt Servicing', 18],
+          ['Education', 8.5],
+          ['Healthcare', 6.9],
+          ['Defense', 5.2],
+          ['Other', 8.4]
+        ]
+      },
+      '2022': {
+        total: '38.7B',
+        deficit: '8.5B',
+        debt: '98%',
+        education: '8.2%',
+        sectors: [
+          ['Infrastructure', 27],
+          ['Social Protection', 23],
+          ['Debt Servicing', 17],
+          ['Education', 8.2],
+          ['Healthcare', 6.8],
+          ['Defense', 5.5],
+          ['Other', 12.5]
+        ]
+      }
+    };
+
+    const statsContainer = document.getElementById('statsContainer');
+    const yearSelect = document.getElementById('yearSelect');
+
+    function renderStats(year) {
+      const data = yearData[year];
+      statsContainer.innerHTML = `
+        <div class="card"><h4>Total Budget</h4><p>MVR ${data.total}</p></div>
+        <div class="card"><h4>Deficit</h4><p>MVR ${data.deficit}</p></div>
+        <div class="card"><h4>Debt-to-GDP</h4><p>${data.debt}</p></div>
+        <div class="card"><h4>Education Share</h4><p>${data.education}</p></div>
+      `;
+    }
+
+    const ctxPie = document.getElementById('sectorChart').getContext('2d');
+    const ctxBar = document.getElementById('trendChart').getContext('2d');
+
+    const pieChart = new Chart(ctxPie, {
+      type: 'pie',
+      data: {
+        labels: [],
+        datasets: [{
+          data: [],
+          backgroundColor: [
+            '#4361ee', '#4895ef', '#3f37c9', '#4cc9f0',
+            '#f72585', '#7209b7', '#b5179e', '#aaa'
+          ]
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'bottom' }
+        }
+      }
+    });
+
+    const barChart = new Chart(ctxBar, {
+      type: 'bar',
+      data: {
+        labels: ['2022', '2023', '2024', '2025'],
+        datasets: [
+          {
+            label: 'Education %',
+            data: [8.2, 8.5, 9.7, 9],
+            backgroundColor: '#4cc9f0'
+          },
+          {
+            label: 'Defense %',
+            data: [5.5, 5.2, 5, 13.6],
+            backgroundColor: '#f72585'
+          },
+          {
+            label: 'Social Protection %',
+            data: [23, 24, 25, 8.1],
+            backgroundColor: '#3f37c9'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'bottom' }
+        },
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+
+    function updateCharts(year) {
+      const sectors = yearData[year].sectors;
+      pieChart.data.labels = sectors.map(s => s[0]);
+      pieChart.data.datasets[0].data = sectors.map(s => s[1]);
+      pieChart.update();
+    }
+
+    yearSelect.addEventListener('change', () => {
+      renderStats(yearSelect.value);
+      updateCharts(yearSelect.value);
+    });
+
+    renderStats('2025');
+    updateCharts('2025');
+  </script>
+</div>
+</div>
+</body>
+</html>
